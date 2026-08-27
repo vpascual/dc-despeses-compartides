@@ -1,0 +1,87 @@
+/* ============================================================
+   WIPO ULF — base element styles & utility classes.
+   Lightweight, flat, accessible defaults built on the tokens.
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: var(--weight-regular);
+  font-size: var(--body-base);
+  line-height: var(--body-base-lh);
+  color: var(--text-body);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-medium);
+  color: var(--text-strong);
+  margin: 0;
+}
+
+.ulf-h1 { font-size: var(--h1-size); line-height: var(--h1-lh); }
+.ulf-h2 { font-size: var(--h2-size); line-height: var(--h2-lh); }
+.ulf-h3 { font-size: var(--h3-size); line-height: var(--h3-lh); }
+.ulf-h4 { font-size: var(--h4-size); line-height: var(--h4-lh); }
+.ulf-h5 { font-size: var(--h5-size); line-height: var(--h5-lh); }
+.ulf-h6 { font-size: var(--h6-size); line-height: var(--h6-lh); }
+
+.ulf-body-lg { font-size: var(--body-lg); line-height: var(--body-lg-lh); }
+.ulf-body { font-size: var(--body-base); line-height: var(--body-base-lh); }
+.ulf-body-md { font-size: var(--body-md); line-height: var(--body-md-lh); }
+.ulf-body-sm { font-size: var(--body-sm); line-height: var(--body-sm-lh); }
+.ulf-caption {
+  font-size: var(--body-caption);
+  line-height: var(--body-caption-lh);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+a:hover { color: var(--text-link-hover); text-decoration: underline; }
+a:visited { color: var(--text-link-visited); }
+
+/* Container — Bootstrap container-fluid-max-xl equivalent */
+.ulf-container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--space-5);
+}
+
+/* Eyebrow label — small caps tag above headings */
+.ulf-eyebrow {
+  font-size: var(--body-sm);
+  line-height: 1;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-link);
+}
+
+/* WIPO wordmark — rendered as text (the official logo is a heavy
+   geometric wordmark; substituted here as a styled span). */
+.ulf-wordmark {
+  font-family: var(--font-sans);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.12em;
+  color: var(--wipo-black);
+  font-size: 26px;
+  line-height: 1;
+}
+
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}

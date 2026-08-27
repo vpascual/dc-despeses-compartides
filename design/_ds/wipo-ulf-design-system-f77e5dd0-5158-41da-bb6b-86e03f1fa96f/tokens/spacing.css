@@ -1,0 +1,36 @@
+/* ============================================================
+   WIPO ULF — Spacing, radius & layout tokens
+   Built on Bootstrap 4 (8px-based) rhythm. Flat layout: NO
+   shadows, NO z-depth. Radii are restrained.
+   ============================================================ */
+:root {
+  /* 8px-based spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* Section vertical rhythm */
+  --section-py: 64px;
+
+  /* Radii — WIPO uses modest rounding; pills for primary CTAs */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-pill: 999px;
+
+  /* Borders */
+  --border-width: 1px;
+
+  /* Layout */
+  --container-max: 1200px;   /* Bootstrap container-fluid-max-xl */
+  --grid-gap: 24px;
+
+  /* Flat system: shadows are intentionally none */
+  --shadow-none: none;
+}

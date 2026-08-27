@@ -1,0 +1,89 @@
+/* ============================================================
+   WIPO ULF — Color tokens
+   Source: WIPO Universal Look & Feel design system.
+   Rules: solid colors only (no gradients), color never conveys
+   meaning alone, alternating white / light-grey section blocks.
+   ============================================================ */
+:root {
+  /* ---- Primary ---- */
+  --wipo-blue: #0059c6;        /* Brand Blue (Blue 4) — primary interaction */
+  --wipo-black: #000000;
+  --wipo-white: #ffffff;
+
+  /* ---- Blue scale (dark → light) ---- */
+  --blue-1: #001938;
+  --blue-2: #002c61;
+  --blue-3: #004294;
+  --blue-4: #0059c6;
+  --blue-5: #0070fa;
+  --blue-6: #2e8cff;
+  --blue-7: #61a8ff;
+  --blue-8: #94c4ff;
+  --blue-9: #c7e0ff;
+  --blue-10: #e5f1ff;
+  --blue-11: #f5f9ff;
+
+  /* ---- Functional / brand accents ---- */
+  --wipo-aqua: #1c94ab;        /* Information */
+  --wipo-lime: #a8b215;        /* Highlight 1 */
+  --wipo-cherry: #b3145b;      /* Highlight 2 */
+  --wipo-magenta: #982f78;     /* Visited links */
+  --wipo-green: #68a225;       /* Success */
+  --wipo-orange: #bf5208;      /* Warning */
+  --wipo-red: #a42623;         /* Danger / error */
+
+  /* Accent supporting shades (used in network viz + tints) */
+  --aqua-9: #cff1f7;
+  --aqua-10: #e9f8fb;
+  --lime-9: #f6f9cd;
+  --lime-10: #fbfce8;
+  --cherry-9: #f9cde1;
+  --cherry-10: #fce8f1;
+  --green-7: #b3e27e;
+  --green-9: #e4f5d1;
+
+  /* ---- Gray scale (dark → light) ---- */
+  --gray-1: #1c1c1c;
+  --gray-2: #303030;
+  --gray-3: #4a4a4a;
+  --gray-4: #636363;
+  --gray-5: #727272;
+  --gray-6: #969696;
+  --gray-7: #b0b0b0;
+  --gray-8: #c9c9c9;
+  --gray-9: #e3e3e3;   /* light dividers */
+  --gray-10: #f0f0f0;  /* section background */
+  --gray-11: #fcfcfc;  /* off-white */
+
+  /* ============================================================
+     Semantic aliases — reference these in components/layouts
+     ============================================================ */
+  --text-strong: #1c1c1c;
+  --text-body: #303030;
+  --text-muted: #4a4a4a;
+  --text-subtle: #727272;
+  --text-on-brand: #ffffff;
+  --text-link: #0059c6;
+  --text-link-hover: #004294;
+  --text-link-visited: #982f78;
+
+  --surface-page: #ffffff;
+  --surface-alt: #f0f0f0;       /* alternating section block */
+  --surface-offwhite: #fcfcfc;
+  --surface-card: #ffffff;
+  --surface-brand: #0059c6;
+  --surface-brand-soft: #f5f9ff;
+  --surface-info-soft: #e9f8fb;
+
+  --border-subtle: #e3e3e3;
+  --border-strong: #969696;
+  --border-focus: #0059c6;
+
+  /* Functional roles (always pair with a text label) */
+  --role-info: #1c94ab;
+  --role-highlight-1: #a8b215;
+  --role-highlight-2: #b3145b;
+  --role-success: #68a225;
+  --role-warning: #bf5208;
+  --role-danger: #a42623;
+}

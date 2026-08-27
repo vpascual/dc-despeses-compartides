@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/wipo-ulf-design-system-f77e5dd0-5158-41da-bb6b-86e03f1fa96f/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/wipo-ulf-design-system-f77e5dd0-5158-41da-bb6b-86e03f1fa96f/tokens/colors.css">
+<link rel="stylesheet" href="_ds/wipo-ulf-design-system-f77e5dd0-5158-41da-bb6b-86e03f1fa96f/tokens/typography.css">
+<link rel="stylesheet" href="_ds/wipo-ulf-design-system-f77e5dd0-5158-41da-bb6b-86e03f1fa96f/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/wipo-ulf-design-system-f77e5dd0-5158-41da-bb6b-86e03f1fa96f/tokens/base.css">
+<link rel="stylesheet" href="_ds/wipo-ulf-design-system-f77e5dd0-5158-41da-bb6b-86e03f1fa96f/styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<script src="_ds/wipo-ulf-design-system-f77e5dd0-5158-41da-bb6b-86e03f1fa96f/_ds_bundle.js"></script>
+<style>
+  :root{
+    --c-bg:#fcfcfc; --c-surface:#ffffff; --c-border:#e3e3e3; --c-text:#1c1c1c;
+    --c-body:#303030; --c-sub:#727272; --c-soft:#f5f9ff; --c-chip:#f0f0f0;
+    --c-blue:#0059c6; --c-blue-2:#004294; --c-pos:#68a225; --c-neg:#b3145b;
+    --c-scrim:rgba(28,28,28,.45);
+  }
+  [data-theme="dark"]{
+    --c-bg:#001938; --c-surface:#002c61; --c-border:#004294; --c-text:#ffffff;
+    --c-body:#e5f1ff; --c-sub:#94c4ff; --c-soft:#001938; --c-chip:#001938;
+    --c-blue:#61a8ff; --c-blue-2:#94c4ff; --c-pos:#b3e27e; --c-neg:#f9cde1;
+    --c-scrim:rgba(0,12,28,.6);
+  }
+  body{margin:0;background:#e3e3e3;font-family:"Noto Sans Display",system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  a{color:var(--c-blue);text-decoration:none} a:hover{color:var(--c-blue-2)}
+  input,button{font-family:inherit}
+  @keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .om-scroll::-webkit-scrollbar{width:0}
+</style>
+</helmet>
+
+<div data-theme="{{ theme }}" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:#e3e3e3;">
+  <div style="position:relative;width:390px;height:844px;overflow:hidden;background:var(--c-bg);border:1px solid #c9c9c9;border-radius:8px;color:var(--c-text);display:flex;flex-direction:column;">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px 2px;font-size:12px;font-weight:500;color:var(--c-sub);">
+      <span>9:41</span>
+      <span style="display:flex;gap:6px;align-items:center;"><i class="bi bi-wifi"></i><i class="bi bi-battery-three-quarters"></i></span>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 20px 12px;">
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <span style="display:flex;align-items:center;gap:7px;font-size:10px;line-height:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-sub);">
+          <span style="display:flex;align-items:center;justify-content:center;min-width:22px;height:18px;padding:0 5px;border-radius:3px;background:var(--c-blue);color:#fff;font-size:10px;font-weight:700;letter-spacing:.06em;">DC</span>
+          Despeses compartides
+        </span>
+        <span style="font-size:19px;line-height:24px;font-weight:500;">{{ coupleLine }}</span>
+      </div>
+      <button onClick="{{ toggleTheme }}" aria-label="Canvia el tema" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--c-border);border-radius:4px;color:var(--c-body);font-size:17px;cursor:pointer;">
+        <i class="bi bi-circle-half"></i>
+      </button>
+    </div>
+
+    <div class="om-scroll" style="flex:1;overflow-y:auto;padding:0 20px 120px;">
+
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Card" dc-props="{{ cardHero }}" hint-size="100%,220px">
+            <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-sub);">Saldo actual</span>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <span style="font-size:15px;line-height:20px;color:var(--c-body);">{{ balanceLead }}</span>
+              <div style="display:flex;align-items:baseline;gap:10px;">
+                <span style="font-size:46px;line-height:50px;font-weight:500;letter-spacing:-.02em;">{{ balanceAmount }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:{{ balanceColor }};">
+                <i class="bi bi-{{ balanceIcon }}"></i><span>{{ balanceTag }}</span>
+              </div>
+            </div>
+            <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Button" icon="arrow-left-right" onClick="{{ goSettle }}" dc-props="{{ btnFull }}" hint-size="100%,50px">Saldar comptes</x-import>
+          </x-import>
+
+          <div style="border:1px solid var(--c-border);border-radius:4px;background:var(--c-surface);padding:16px;display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;">
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-sub);">Gastat aquest mes</span>
+                <span style="font-size:15px;color:var(--c-sub);text-transform:capitalize;">{{ monthName }}</span>
+              </div>
+              <span style="font-size:28px;line-height:30px;font-weight:500;letter-spacing:-.01em;">{{ monthTotal }}</span>
+            </div>
+            <div style="display:flex;height:6px;border-radius:999px;overflow:hidden;background:var(--c-chip);">
+              <div style="width:{{ monthMineWidth }};background:var(--c-blue);"></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--c-sub);">
+              <span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:999px;background:var(--c-blue);"></span>{{ monthMineLabel }}</span>
+              <span style="display:flex;align-items:center;gap:6px;"><span style="width:8px;height:8px;border-radius:999px;background:var(--c-chip);border:1px solid var(--c-border);"></span>{{ monthTheirsLabel }}</span>
+            </div>
+            <span style="font-size:12px;color:var(--c-sub);">{{ monthCount }} · llibre general i projectes</span>
+          </div>
+
+          <sc-if value="{{ hasActiveProjects }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-sub);">Projectes actius</span>
+                <button onClick="{{ goProjects }}" style="background:transparent;border:0;color:var(--c-blue);font-size:13px;font-weight:500;cursor:pointer;padding:6px 0;">Tots</button>
+              </div>
+              <sc-for list="{{ activeProjects }}" as="p" hint-placeholder-count="2">
+                <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Card" interactive="{{ true }}" top-color="var(--c-blue)" onClick="{{ p.open }}" dc-props="{{ cardRow }}" hint-size="100%,80px">
+                  <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
+                    <span style="font-size:16px;font-weight:500;">{{ p.name }}</span>
+                    <span style="font-size:12px;color:var(--c-sub);">{{ p.sub }}</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
+                    <span style="font-size:16px;font-weight:500;">{{ p.total }}</span>
+                    <span style="font-size:11px;color:var(--c-sub);">total</span>
+                  </div>
+                  <i class="bi bi-chevron-right" style="color:var(--c-sub);font-size:13px;"></i>
+                </x-import>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-sub);">Llibre general</span>
+            <div style="border:1px solid var(--c-border);border-radius:4px;background:var(--c-surface);overflow:hidden;">
+              <sc-for list="{{ generalFeed }}" as="it" hint-placeholder-count="6">
+                <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--c-border);">
+                  <div style="width:36px;height:36px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:4px;background:var(--c-chip);color:var(--c-body);font-size:16px;">
+                    <i class="bi bi-{{ it.icon }}"></i>
+                  </div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0;">
+                    <span style="font-size:15px;font-weight:500;">{{ it.desc }}</span>
+                    <span style="font-size:12px;color:var(--c-sub);">{{ it.sub }}</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+                    <span style="font-size:15px;font-weight:500;">{{ it.amount }}</span>
+                    <span style="font-size:11px;color:{{ it.deltaColor }};">{{ it.delta }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isProjects }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Button" variant="secondary" icon="plus-lg" onClick="{{ openNewProject }}" dc-props="{{ btnDashed }}" hint-size="100%,52px">Nou projecte</x-import>
+          <div style="display:flex;gap:4px;padding:4px;background:var(--c-chip);border:1px solid var(--c-border);border-radius:4px;">
+            <button onClick="{{ showActive }}" style="{{ projTabActiveStyle }}">{{ projTabActiveLabel }}</button>
+            <button onClick="{{ showClosed }}" style="{{ projTabClosedStyle }}">{{ projTabClosedLabel }}</button>
+          </div>
+
+          <sc-if value="{{ projActive }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <sc-for list="{{ activeProjects }}" as="p" hint-placeholder-count="2">
+              <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Card" interactive="{{ true }}" top-color="var(--c-blue)" onClick="{{ p.open }}" dc-props="{{ cardRow }}" hint-size="100%,96px">
+                <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                  <span style="font-size:16px;font-weight:500;">{{ p.name }}</span>
+                  <span style="font-size:12px;color:var(--c-sub);">{{ p.sub }}</span>
+                  <span style="font-size:12px;color:{{ p.netColor }};font-weight:500;">{{ p.netLine }}</span>
+                </div>
+                <span style="font-size:17px;font-weight:500;">{{ p.total }}</span>
+                <i class="bi bi-chevron-right" style="color:var(--c-sub);font-size:13px;"></i>
+              </x-import>
+            </sc-for>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ projClosed }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <span style="font-size:12px;line-height:18px;color:var(--c-sub);">Projectes ja liquidats. El desequilibri de cada un ja consta al llibre general.</span>
+            <sc-for list="{{ closedProjects }}" as="p" hint-placeholder-count="1">
+              <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Card" interactive="{{ true }}" onClick="{{ p.open }}" dc-props="{{ cardRowQuiet }}" hint-size="100%,80px">
+                <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:16px;font-weight:500;">{{ p.name }}</span>
+                    <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Badge" size="sm" icon="check2" dc-props="{{ badgeClosed }}" hint-size="auto,22px">Tancat</x-import>
+                  </div>
+                  <span style="font-size:12px;color:var(--c-sub);">{{ p.sub }}</span>
+                </div>
+                <span style="font-size:16px;font-weight:500;">{{ p.total }}</span>
+              </x-import>
+            </sc-for>
+          </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isProject }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <button onClick="{{ goProjects }}" style="align-self:flex-start;min-height:44px;display:flex;align-items:center;gap:8px;background:transparent;border:0;color:var(--c-blue);font-size:14px;font-weight:500;cursor:pointer;padding:0;">
+            <i class="bi bi-chevron-left"></i>Projectes
+          </button>
+          <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Card" top-color="var(--c-blue)" dc-props="{{ cardPanel }}" hint-size="100%,260px">
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <span style="font-size:22px;line-height:28px;font-weight:500;">{{ pj.name }}</span>
+              <span style="font-size:12px;color:var(--c-sub);">{{ pj.sub }}</span>
+            </div>
+            <div style="display:flex;gap:0;border-top:1px solid var(--c-border);border-bottom:1px solid var(--c-border);">
+              <div style="flex:1;padding:14px 0;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--c-sub);">Total</span>
+                <span style="font-size:22px;font-weight:500;">{{ pj.total }}</span>
+              </div>
+              <div style="flex:1;padding:14px 0 14px 16px;border-left:1px solid var(--c-border);display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--c-sub);">Desequilibri</span>
+                <span style="font-size:22px;font-weight:500;color:{{ pj.netColor }};">{{ pj.netAmount }}</span>
+              </div>
+            </div>
+            <span style="font-size:13px;color:var(--c-body);">{{ pj.netLine }}</span>
+            <sc-if value="{{ pj.isActive }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;gap:8px;">
+                <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Button" icon="plus-lg" onClick="{{ openAddHere }}" dc-props="{{ btnGrow }}" hint-size="auto,48px">Despesa</x-import>
+                <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Button" variant="ghost" icon="box-arrow-in-down" onClick="{{ openClose }}" dc-props="{{ btnQuiet }}" hint-size="auto,48px">Tanca</x-import>
+              </div>
+            </sc-if>
+          </x-import>
+          <div style="border:1px solid var(--c-border);border-radius:4px;background:var(--c-surface);overflow:hidden;">
+            <sc-for list="{{ projectFeed }}" as="it" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--c-border);">
+                <div style="width:36px;height:36px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:4px;background:var(--c-chip);color:var(--c-body);font-size:16px;">
+                  <i class="bi bi-{{ it.icon }}"></i>
+                </div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:2px;">
+                  <span style="font-size:15px;font-weight:500;">{{ it.desc }}</span>
+                  <span style="font-size:12px;color:var(--c-sub);">{{ it.sub }}</span>
+                </div>
+                <span style="font-size:15px;font-weight:500;">{{ it.amount }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSettle }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div style="border:1px solid var(--c-border);border-radius:8px;background:var(--c-soft);padding:24px 20px;display:flex;flex-direction:column;gap:16px;">
+            <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-sub);">A saldar aquest mes</span>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <span style="font-size:46px;line-height:50px;font-weight:500;letter-spacing:-.02em;">{{ balanceAmount }}</span>
+              <span style="font-size:15px;color:var(--c-body);">{{ settleLine }}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;padding:14px 16px;background:var(--c-surface);border:1px solid var(--c-border);border-radius:4px;">
+              <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-sub);">Transferència</span>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <span style="font-size:14px;font-family:ui-monospace,SFMono-Regular,monospace;color:var(--c-body);">{{ iban }}</span>
+                <i class="bi bi-clipboard" style="color:var(--c-blue);font-size:15px;"></i>
+              </div>
+              <span style="font-size:12px;color:var(--c-sub);">Concepte: {{ settleConcept }}</span>
+            </div>
+            <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Button" icon="check2" onClick="{{ markSettled }}" dc-props="{{ btnFull }}" hint-size="100%,52px">Marca com a saldat</x-import>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <span style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--c-sub);">Historial de pagaments</span>
+            <div style="border:1px solid var(--c-border);border-radius:4px;background:var(--c-surface);overflow:hidden;">
+              <sc-for list="{{ settlements }}" as="s" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--c-border);">
+                  <div style="width:36px;height:36px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:999px;background:var(--c-chip);color:var(--c-body);font-size:15px;">
+                    <i class="bi bi-check2"></i>
+                  </div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:2px;">
+                    <span style="font-size:15px;font-weight:500;">{{ s.title }}</span>
+                    <span style="font-size:12px;color:var(--c-sub);">{{ s.sub }}</span>
+                  </div>
+                  <span style="font-size:15px;font-weight:500;">{{ s.amount }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+
+    <div style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:stretch;background:var(--c-surface);border-top:1px solid var(--c-border);">
+      <button onClick="{{ tabHomePress }}" style="flex:1;min-height:60px;padding:8px 0 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:transparent;border:0;cursor:pointer;color:{{ tabHomeColor }};">
+        <i class="bi bi-house" style="font-size:19px;"></i>
+        <span style="font-size:11px;font-weight:500;">Inici</span>
+      </button>
+      <button onClick="{{ tabProjectsPress }}" style="flex:1;min-height:60px;padding:8px 0 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:transparent;border:0;cursor:pointer;color:{{ tabProjectsColor }};">
+        <i class="bi bi-collection" style="font-size:19px;"></i>
+        <span style="font-size:11px;font-weight:500;">Projectes</span>
+      </button>
+      <button onClick="{{ tabSettlePress }}" style="flex:1;min-height:60px;padding:8px 0 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:transparent;border:0;cursor:pointer;color:{{ tabSettleColor }};">
+        <i class="bi bi-arrow-left-right" style="font-size:19px;"></i>
+        <span style="font-size:11px;font-weight:500;">Saldar</span>
+      </button>
+    </div>
+    <button onClick="{{ openAdd }}" aria-label="Afegeix una despesa" style="position:absolute;right:20px;bottom:84px;width:60px;height:60px;border-radius:999px;border:0;background:var(--c-blue);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+      <i class="bi bi-plus-lg"></i>
+    </button>
+
+    <sc-if value="{{ showToast }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:20px;right:20px;bottom:160px;padding:14px 16px;background:var(--c-text);color:var(--c-bg);border-radius:4px;font-size:14px;display:flex;align-items:center;gap:10px;animation:toastIn .16s ease;">
+        <i class="bi bi-check2-circle"></i><span>{{ toast }}</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ sheetOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;background:var(--c-scrim);animation:fadeIn .14s ease;"></div>
+    </sc-if>
+
+    <sc-if value="{{ isAddSheet }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:0;right:0;bottom:0;background:var(--c-surface);border-top:1px solid var(--c-border);border-radius:8px 8px 0 0;animation:sheetUp .2s ease;display:flex;flex-direction:column;max-height:96%;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--c-border);">
+          <button onClick="{{ closeSheet }}" style="min-height:44px;background:transparent;border:0;color:var(--c-blue);font-size:15px;cursor:pointer;padding:0;">Cancel·la</button>
+          <span style="font-size:15px;font-weight:500;">Nova despesa</span>
+          <button onClick="{{ saveExpense }}" style="min-height:44px;background:transparent;border:0;color:{{ saveColor }};font-size:15px;font-weight:500;cursor:pointer;padding:0;">Desa</button>
+        </div>
+        <div class="om-scroll" style="overflow-y:auto;padding:18px 20px 20px;display:flex;flex-direction:column;gap:18px;">
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;padding:6px 0 2px;">
+            <span style="font-size:52px;line-height:56px;font-weight:500;letter-spacing:-.02em;color:{{ amountColor }};">{{ amountDisplay }}</span>
+            <span style="font-size:24px;font-weight:500;color:var(--c-sub);">€</span>
+          </div>
+          <input value="{{ desc }}" onChange="{{ setDesc }}" placeholder="Descripció (p. ex. Compra setmanal)" style="width:100%;box-sizing:border-box;min-height:48px;padding:0 14px;font-size:16px;color:var(--c-text);background:var(--c-bg);border:1px solid var(--c-border);border-radius:4px;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-sub);">Qui ha pagat</span>
+            <div style="display:flex;gap:8px;">
+              <sc-for list="{{ payerOptions }}" as="o" hint-placeholder-count="2">
+                <button onClick="{{ o.press }}" style="{{ o.style }}">{{ o.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-sub);">Repartiment</span>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <sc-for list="{{ splitOptions }}" as="o" hint-placeholder-count="4">
+                <button onClick="{{ o.press }}" style="{{ o.style }}">{{ o.label }}</button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ customSplit }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1px solid var(--c-border);border-radius:4px;background:var(--c-bg);">
+                <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--c-body);">
+                  <span>{{ splitMineLabel }}</span><span>{{ splitTheirsLabel }}</span>
+                </div>
+                <input type="range" min="0" max="100" step="5" value="{{ share }}" onChange="{{ setShare }}" style="width:100%;accent-color:var(--c-blue);">
+              </div>
+            </sc-if>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-sub);">Llibre</span>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <sc-for list="{{ ledgerOptions }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.press }}" style="{{ o.style }}">{{ o.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+            <sc-for list="{{ keys }}" as="k" hint-placeholder-count="12">
+              <button onClick="{{ k.press }}" style="min-height:52px;display:flex;align-items:center;justify-content:center;border:1px solid var(--c-border);border-radius:4px;background:var(--c-bg);color:var(--c-text);font-size:21px;font-weight:500;cursor:pointer;">{{ k.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isNewProjectSheet }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:0;right:0;bottom:0;background:var(--c-surface);border-top:1px solid var(--c-border);border-radius:8px 8px 0 0;animation:sheetUp .2s ease;padding:0 0 24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--c-border);">
+          <button onClick="{{ closeSheet }}" style="min-height:44px;background:transparent;border:0;color:var(--c-blue);font-size:15px;cursor:pointer;padding:0;">Cancel·la</button>
+          <span style="font-size:15px;font-weight:500;">Nou projecte</span>
+          <span style="width:60px;"></span>
+        </div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <span style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--c-sub);">Nom del projecte</span>
+            <input value="{{ newName }}" onChange="{{ setNewName }}" placeholder="Viatge a Roma, Reforma cuina, Regal aniversari…" style="width:100%;box-sizing:border-box;min-height:52px;padding:0 14px;font-size:16px;color:var(--c-text);background:var(--c-bg);border:1px solid var(--c-border);border-radius:4px;">
+          </div>
+          <span style="font-size:13px;line-height:19px;color:var(--c-sub);">Les despeses d'un projecte queden a part. Quan el tanquis, el desequilibri passa al llibre general en una sola línia.</span>
+          <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Button" icon="plus-lg" onClick="{{ createProject }}" dc-props="{{ btnFull }}" hint-size="100%,52px">Crea el projecte</x-import>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCloseSheet }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;left:0;right:0;bottom:0;background:var(--c-surface);border-top:1px solid var(--c-border);border-radius:8px 8px 0 0;animation:sheetUp .2s ease;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--c-border);">
+          <button onClick="{{ closeSheet }}" style="min-height:44px;background:transparent;border:0;color:var(--c-blue);font-size:15px;cursor:pointer;padding:0;">Enrere</button>
+          <span style="font-size:15px;font-weight:500;">Tancar el projecte</span>
+          <span style="width:52px;"></span>
+        </div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:16px;">
+          <span style="font-size:20px;line-height:26px;font-weight:500;">{{ closeTitle }}</span>
+          <div style="border:1px solid var(--c-border);border-radius:4px;overflow:hidden;">
+            <sc-for list="{{ closeRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-bottom:1px solid var(--c-border);background:{{ r.bg }};">
+                <span style="font-size:14px;color:var(--c-body);">{{ r.label }}</span>
+                <span style="font-size:15px;font-weight:500;color:{{ r.color }};">{{ r.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;padding:14px 16px;background:var(--c-soft);border:1px solid var(--c-border);border-radius:4px;">
+            <i class="bi bi-info-circle" style="color:var(--c-blue);font-size:15px;margin-top:2px;"></i>
+            <span style="font-size:13px;line-height:19px;color:var(--c-body);">{{ closeNote }}</span>
+          </div>
+          <x-import component-from-global-scope="WIPOULFDesignSystem_f77e5d.Button" icon="check2" onClick="{{ confirmClose }}" dc-props="{{ btnFull }}" hint-size="100%,52px">Confirma i tanca</x-import>
+          <button onClick="{{ closeSheet }}" style="min-height:44px;background:transparent;border:0;color:var(--c-sub);font-size:14px;cursor:pointer;">No, encara no</button>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:430,&quot;height&quot;:900},&quot;startTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light'|'dark'&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const me = "Víctor", you = "Sílvia";
+    this.state = {
+      theme: props.startTheme || "light",
+      tab: "home",
+      projTab: "active",
+      openProject: null,
+      sheet: null,
+      toast: null,
+      amountStr: "",
+      desc: "",
+      payer: "me",
+      share: 50,
+      customSplit: false,
+      ledger: "general",
+      newName: "",
+      general: [
+        { kind: "expense", id: "g1", desc: "Lloguer agost", amount: 950, payer: "me", share: 50, icon: "house-door", date: "2026-08-01" },
+        { kind: "settle", id: "s1", amount: 318.4, from: "partner", date: "2026-08-03" },
+        { kind: "expense", id: "g2", desc: "Llum i aigua", amount: 61.2, payer: "me", share: 50, icon: "lightbulb", date: "2026-08-08" },
+        { kind: "rollup", id: "r1", desc: "Tancament: Regal aniversari iaia", net: -21.5, amount: 86, icon: "gift", date: "2026-08-11" },
+        { kind: "expense", id: "g3", desc: "Compra Bonpreu", amount: 78.4, payer: "partner", share: 50, icon: "cart", date: "2026-08-14" },
+        { kind: "expense", id: "g4", desc: "Farmàcia", amount: 12.9, payer: "partner", share: 50, icon: "capsule", date: "2026-08-18" },
+        { kind: "expense", id: "g5", desc: "Sopar Can Pineda", amount: 46, payer: "partner", share: 50, icon: "cup-hot", date: "2026-08-21" },
+        { kind: "expense", id: "g6", desc: "Gasoil cotxe", amount: 64.3, payer: "me", share: 70, icon: "fuel-pump", date: "2026-08-24" }
+      ],
+      projects: [
+        { id: "p1", name: "Viatge a Roma", active: true, created: "2026-08-05", items: [
+          { kind: "expense", id: "p1a", desc: "Vols Vueling", amount: 214, payer: "me", share: 50, icon: "airplane", date: "2026-08-05" },
+          { kind: "expense", id: "p1b", desc: "Hotel Trastevere", amount: 380, payer: "partner", share: 50, icon: "building", date: "2026-08-06" },
+          { kind: "expense", id: "p1c", desc: "Trattoria da Enzo", amount: 62.5, payer: "me", share: 50, icon: "cup-hot", date: "2026-08-22" }
+        ] },
+        { id: "p2", name: "Reforma cuina", active: true, created: "2026-07-19", items: [
+          { kind: "expense", id: "p2a", desc: "Pressupost fuster", amount: 300, payer: "partner", share: 50, icon: "hammer", date: "2026-07-19" },
+          { kind: "expense", id: "p2b", desc: "Rajoles Leroy", amount: 128.7, payer: "me", share: 50, icon: "grid-3x3", date: "2026-08-02" }
+        ] },
+        { id: "p3", name: "Regal aniversari iaia", active: false, created: "2026-07-02", items: [
+          { kind: "expense", id: "p3a", desc: "Rellotge", amount: 86, payer: "partner", share: 50, icon: "gift", date: "2026-07-02" }
+        ] }
+      ],
+      settlements: [
+        { id: "s1", amount: 318.4, from: "partner", date: "2026-08-03" },
+        { id: "s0", amount: 122.15, from: "me", date: "2026-07-04" },
+        { id: "sm1", amount: 204.8, from: "partner", date: "2026-06-05" }
+      ],
+      me, you
+    };
+  }
+
+  eur(n) { return Math.abs(n).toLocaleString("ca-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €"; }
+  day(d) { return new Date(d + "T12:00:00").toLocaleDateString("ca-ES", { day: "numeric", month: "short" }); }
+  get names() { return { me: "Víctor", you: "Sílvia" }; }
+  who(p) { return p === "me" ? this.names.me : this.names.you; }
+
+  delta(it) {
+    if (it.kind === "expense") return it.payer === "me" ? it.amount * (100 - it.share) / 100 : -it.amount * it.share / 100;
+    if (it.kind === "rollup") return it.net;
+    if (it.kind === "settle") return it.from === "partner" ? -it.amount : it.amount;
+    return 0;
+  }
+  balance() { return this.state.general.reduce((s, it) => s + this.delta(it), 0); }
+
+  monthKey() { return new Date().toISOString().slice(0, 7); }
+  monthSpend() {
+    const mk = this.monthKey();
+    const rows = this.state.general.filter(it => it.kind === "expense")
+      .concat(this.state.projects.reduce((a, p) => a.concat(p.items), []))
+      .filter(it => it.date.slice(0, 7) === mk);
+    const total = rows.reduce((a, it) => a + it.amount, 0);
+    const mine = rows.filter(it => it.payer === "me").reduce((a, it) => a + it.amount, 0);
+    return { total, mine, theirs: total - mine, count: rows.length };
+  }
+  projectNet(p) { return p.items.reduce((s, it) => s + this.delta(it), 0); }
+
+  chip(active) {
+    return "min-height:44px;padding:0 16px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-size:14px;font-weight:500;cursor:pointer;transition:background 120ms ease;" +
+      (active
+        ? "background:var(--c-blue);color:#fff;border:1px solid var(--c-blue);"
+        : "background:var(--c-bg);color:var(--c-body);border:1px solid var(--c-border);");
+  }
+  wideChip(active) { return this.chip(active) + "flex:1;"; }
+  segStyle(active) {
+    return "flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;border:0;border-radius:4px;font-size:14px;font-weight:500;cursor:pointer;transition:background 120ms ease;" +
+      (active ? "background:var(--c-surface);color:var(--c-blue);" : "background:transparent;color:var(--c-sub);");
+  }
+  tabStyle(active) {
+    return "flex:1;min-height:60px;padding:8px 0 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:transparent;border:0;cursor:pointer;color:" +
+      (active ? "var(--c-blue)" : "var(--c-sub)") + ";";
+  }
+
+  set(o) { this.setState(o); }
+  flash(msg) {
+    this.setState({ toast: msg });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ toast: null }), 2400);
+  }
+
+  resetForm(ledger) {
+    this.setState({ amountStr: "", desc: "", payer: "me", share: 50, customSplit: false, ledger: ledger || "general", sheet: "add" });
+  }
+
+  saveExpense = () => {
+    const amt = parseFloat(this.state.amountStr.replace(",", "."));
+    if (!amt || amt <= 0) { this.flash("Escriu un import"); return; }
+    const item = {
+      kind: "expense", id: "n" + Date.now(),
+      desc: this.state.desc.trim() || "Despesa compartida",
+      amount: amt, payer: this.state.payer, share: this.state.share,
+      icon: "receipt", date: new Date().toISOString().slice(0, 10)
+    };
+    if (this.state.ledger === "general") {
+      this.setState(s => ({ general: s.general.concat([item]), sheet: null }));
+    } else {
+      const pid = this.state.ledger;
+      this.setState(s => ({
+        projects: s.projects.map(p => p.id === pid ? Object.assign({}, p, { items: p.items.concat([item]) }) : p),
+        sheet: null
+      }));
+    }
+    this.flash("Despesa afegida · " + this.eur(amt));
+  };
+
+  createProject = () => {
+    const name = this.state.newName.trim();
+    if (!name) { this.flash("Posa-li un nom"); return; }
+    const id = "np" + Date.now();
+    this.setState(s => ({
+      projects: [{ id, name, active: true, created: new Date().toISOString().slice(0, 10), items: [] }].concat(s.projects),
+      sheet: null, newName: "", openProject: id, tab: "project"
+    }));
+    this.flash("Projecte creat");
+  };
+
+  confirmClose = () => {
+    const p = this.state.projects.find(x => x.id === this.state.openProject);
+    if (!p) return;
+    const net = this.projectNet(p);
+    const total = p.items.reduce((s, it) => s + it.amount, 0);
+    const line = { kind: "rollup", id: "r" + Date.now(), desc: "Tancament: " + p.name, net, amount: total, icon: "box-arrow-in-down", date: new Date().toISOString().slice(0, 10) };
+    this.setState(s => ({
+      general: s.general.concat([line]),
+      projects: s.projects.map(x => x.id === p.id ? Object.assign({}, x, { active: false }) : x),
+      sheet: null, tab: "home", openProject: null
+    }));
+    this.flash("Projecte tancat · " + this.eur(net) + " al llibre general");
+  };
+
+  markSettled = () => {
+    const bal = this.balance();
+    if (Math.abs(bal) < 0.01) { this.flash("Ja esteu a zero"); return; }
+    const from = bal > 0 ? "partner" : "me";
+    const amount = Math.abs(bal);
+    const date = new Date().toISOString().slice(0, 10);
+    this.setState(s => ({
+      general: s.general.concat([{ kind: "settle", id: "ns" + Date.now(), amount, from, date }]),
+      settlements: [{ id: "ns" + Date.now(), amount, from, date }].concat(s.settlements)
+    }));
+    this.flash("Saldat · " + this.eur(amount));
+  };
+
+  renderVals() {
+    const s = this.state, me = this.names.me, you = this.names.you;
+    const bal = this.balance();
+    const pos = bal > 0.005, zero = Math.abs(bal) <= 0.005;
+
+    const feedRow = it => {
+      if (it.kind === "settle") {
+        const inbound = it.from === "partner";
+        return {
+          icon: "arrow-left-right",
+          desc: inbound ? you + " t'ha transferit" : "Has transferit a " + you,
+          sub: "Saldat · " + this.day(it.date),
+          amount: this.eur(it.amount), delta: "liquidació", deltaColor: "var(--c-sub)"
+        };
+      }
+      if (it.kind === "rollup") {
+        return {
+          icon: it.icon, desc: it.desc,
+          sub: "Projecte tancat · " + this.day(it.date),
+          amount: this.eur(it.amount),
+          delta: (it.net > 0 ? "+" : "−") + this.eur(it.net),
+          deltaColor: it.net > 0 ? "var(--c-pos)" : "var(--c-neg)"
+        };
+      }
+      const d = this.delta(it);
+      return {
+        icon: it.icon, desc: it.desc,
+        sub: (it.payer === "me" ? "Has pagat" : you + " ha pagat") + (it.share === 50 ? "" : " · " + it.share + "/" + (100 - it.share)) + " · " + this.day(it.date),
+        amount: this.eur(it.amount),
+        delta: (d > 0 ? "+" : "−") + this.eur(d),
+        deltaColor: d > 0 ? "var(--c-pos)" : "var(--c-neg)"
+      };
+    };
+
+    const sortDesc = a => a.slice().sort((x, y) => (x.date < y.date ? 1 : -1));
+    const mapProject = p => {
+      const net = this.projectNet(p);
+      const total = p.items.reduce((a, it) => a + it.amount, 0);
+      return {
+        name: p.name,
+        sub: p.items.length + (p.items.length === 1 ? " despesa" : " despeses") + " · des del " + this.day(p.created),
+        total: this.eur(total),
+        netAmount: this.eur(net),
+        netColor: net > 0 ? "var(--c-pos)" : "var(--c-neg)",
+        netLine: Math.abs(net) < 0.005 ? "Equilibrat" : (net > 0 ? you + " et deu " + this.eur(net) + " d'aquest projecte" : "Deus " + this.eur(net) + " a " + you + " d'aquest projecte"),
+        isActive: p.active,
+        open: () => this.setState({ tab: "project", openProject: p.id })
+      };
+    };
+
+    const pj = s.projects.find(p => p.id === s.openProject);
+    const pjView = pj ? mapProject(pj) : {};
+
+    const closeNet = pj ? this.projectNet(pj) : 0;
+    const closeTotal = pj ? pj.items.reduce((a, it) => a + it.amount, 0) : 0;
+    const paidMe = pj ? pj.items.filter(i => i.payer === "me").reduce((a, i) => a + i.amount, 0) : 0;
+
+    const keyDefs = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ",", "0", "⌫"];
+    const keys = keyDefs.map(k => ({
+      label: k,
+      press: () => this.setState(st => {
+        let a = st.amountStr;
+        if (k === "⌫") a = a.slice(0, -1);
+        else if (k === ",") a = a.includes(",") ? a : (a || "0") + ",";
+        else if (a.includes(",") && a.split(",")[1].length >= 2) a = a;
+        else a = (a === "0" ? "" : a) + k;
+        return { amountStr: a };
+      })
+    }));
+
+    const ledgerOptions = [{ id: "general", label: "General" }]
+      .concat(s.projects.filter(p => p.active).map(p => ({ id: p.id, label: p.name })))
+      .map(o => ({ label: o.label, style: this.chip(s.ledger === o.id), press: () => this.set({ ledger: o.id }) }));
+
+    const splitPresets = [
+      { label: "50 / 50", on: !s.customSplit && s.share === 50, act: { share: 50, customSplit: false } },
+      { label: "Tot jo", on: !s.customSplit && s.share === 100, act: { share: 100, customSplit: false } },
+      { label: "Tot " + you, on: !s.customSplit && s.share === 0, act: { share: 0, customSplit: false } },
+      { label: "Personalitzat", on: s.customSplit, act: { customSplit: true } }
+    ].map(o => ({ label: o.label, style: this.chip(o.on), press: () => this.set(o.act) }));
+
+    const ms = this.monthSpend();
+    const tabColor = on => (on ? "var(--c-blue)" : "var(--c-sub)");
+    const goTab = id => () => this.setState({ tab: id, openProject: null });
+
+    return {
+      theme: s.theme,
+      toggleTheme: () => this.setState(st => ({ theme: st.theme === "light" ? "dark" : "light" })),
+      coupleLine: me + " i " + you,
+
+      isHome: s.tab === "home", isProjects: s.tab === "projects", isProject: s.tab === "project" && !!pj, isSettle: s.tab === "settle",
+      goSettle: () => this.setState({ tab: "settle" }),
+      goProjects: () => this.setState({ tab: "projects", openProject: null }),
+
+      balanceLead: zero ? "Esteu a zero" : (pos ? you + " et deu" : "Deus a " + you),
+      balanceAmount: this.eur(bal),
+      balanceTag: zero ? "Cap deute pendent" : (pos ? "A favor teu" : "En contra teva"),
+      balanceColor: zero ? "var(--c-sub)" : (pos ? "var(--c-pos)" : "var(--c-neg)"),
+      balanceIcon: zero ? "check2-circle" : (pos ? "arrow-down-left" : "arrow-up-right"),
+
+      monthName: new Date().toLocaleDateString("ca-ES", { month: "long", year: "numeric" }),
+      monthTotal: this.eur(ms.total),
+      monthCount: ms.count + (ms.count === 1 ? " despesa" : " despeses"),
+      monthMineLabel: me + " " + this.eur(ms.mine),
+      monthTheirsLabel: you + " " + this.eur(ms.theirs),
+      monthMineWidth: (ms.total ? Math.round(ms.mine / ms.total * 100) : 50) + "%",
+
+      projActive: s.projTab === "active",
+      projClosed: s.projTab === "closed",
+      projTabActiveStyle: this.segStyle(s.projTab === "active"),
+      projTabClosedStyle: this.segStyle(s.projTab === "closed"),
+      projTabActiveLabel: "Actius (" + s.projects.filter(p => p.active).length + ")",
+      projTabClosedLabel: "Arxiu (" + s.projects.filter(p => !p.active).length + ")",
+      showActive: () => this.set({ projTab: "active" }),
+      showClosed: () => this.set({ projTab: "closed" }),
+
+      generalFeed: sortDesc(s.general).map(feedRow),
+      projectFeed: pj ? sortDesc(pj.items).map(feedRow) : [],
+      activeProjects: s.projects.filter(p => p.active).map(mapProject),
+      closedProjects: s.projects.filter(p => !p.active).map(mapProject),
+      hasActiveProjects: s.projects.some(p => p.active),
+      pj: pjView,
+
+      settleLine: zero ? "No hi ha res a saldar aquest mes." : (pos ? you + " t'ha de fer la transferència." : "Fes-li la transferència a " + you + "."),
+      iban: "ES91 2100 0418 4502 0005 1332",
+      settleConcept: "Comptes agost 2026",
+      settlements: s.settlements.map(x => ({
+        title: x.from === "partner" ? you + " → " + me : me + " → " + you,
+        sub: "Transferència · " + this.day(x.date),
+        amount: this.eur(x.amount)
+      })),
+      markSettled: this.markSettled,
+
+      sheetOpen: !!s.sheet,
+      closeSheet: () => this.setState({ sheet: null }),
+      isAddSheet: s.sheet === "add",
+      isNewProjectSheet: s.sheet === "project",
+      isCloseSheet: s.sheet === "close",
+      openAdd: () => this.resetForm("general"),
+      openAddHere: () => this.resetForm(s.openProject),
+      openNewProject: () => this.setState({ sheet: "project", newName: "" }),
+      openClose: () => this.setState({ sheet: "close" }),
+
+      amountDisplay: s.amountStr || "0",
+      amountColor: s.amountStr ? "var(--c-text)" : "var(--c-sub)",
+      saveColor: s.amountStr ? "var(--c-blue)" : "var(--c-sub)",
+      desc: s.desc,
+      setDesc: e => this.set({ desc: e.target.value }),
+      badgeClosed: { style: { background: "var(--c-chip)", border: "1px solid var(--c-border)", color: "var(--c-sub)", letterSpacing: ".06em", textTransform: "uppercase", fontSize: 10 } },
+      cardHero: { padding: "24px 20px", style: { background: "var(--c-soft)", borderRadius: 8, borderColor: "var(--c-border)", borderTopColor: "var(--c-blue)", display: "flex", flexDirection: "column", gap: 14 } },
+      cardRow: { padding: "14px 16px", style: { background: "var(--c-surface)", borderColor: "var(--c-border)", borderTopColor: "var(--c-blue)", display: "flex", alignItems: "center", gap: 14, textAlign: "left", color: "var(--c-text)" } },
+      cardRowQuiet: { padding: "14px 16px", style: { background: "var(--c-bg)", borderColor: "var(--c-border)", display: "flex", alignItems: "center", gap: 14, textAlign: "left", color: "var(--c-body)" } },
+      cardPanel: { padding: 20, style: { background: "var(--c-surface)", borderRadius: 8, borderColor: "var(--c-border)", borderTopColor: "var(--c-blue)", display: "flex", flexDirection: "column", gap: 16 } },
+      btnGrow: { style: { flex: 1, minHeight: 48, fontSize: 15 } },
+      btnSoft: { style: { minHeight: 48, fontSize: 15, background: "transparent" } },
+      btnQuiet: { style: { minHeight: 48, fontSize: 15, color: "var(--c-body)", borderColor: "var(--c-border)" } },
+      btnFull: { style: { width: "100%", minHeight: 52 } },
+      btnDashed: { style: { width: "100%", minHeight: 52, borderStyle: "dashed", background: "transparent", fontSize: 15 } },
+      tabHomePress: goTab("home"), tabProjectsPress: goTab("projects"), tabSettlePress: goTab("settle"),
+      tabHomeColor: tabColor(s.tab === "home"),
+      tabProjectsColor: tabColor(s.tab === "projects" || s.tab === "project"),
+      tabSettleColor: tabColor(s.tab === "settle"),
+      keys, ledgerOptions, splitOptions: splitPresets,
+      payerOptions: [
+        { label: "Jo (" + me + ")", style: this.wideChip(s.payer === "me"), press: () => this.set({ payer: "me" }) },
+        { label: you, style: this.wideChip(s.payer === "partner"), press: () => this.set({ payer: "partner" }) }
+      ],
+      customSplit: s.customSplit,
+      share: s.share,
+      setShare: e => this.set({ share: parseInt(e.target.value, 10) }),
+      splitMineLabel: "Jo " + s.share + "%",
+      splitTheirsLabel: you + " " + (100 - s.share) + "%",
+      saveExpense: this.saveExpense,
+
+      newName: s.newName,
+      setNewName: e => this.set({ newName: e.target.value }),
+      createProject: this.createProject,
+
+      closeTitle: pj ? "Tanques «" + pj.name + "»?" : "",
+      closeRows: pj ? [
+        { label: "Despeses del projecte", value: this.eur(closeTotal), color: "var(--c-text)", bg: "transparent" },
+        { label: "Has pagat tu", value: this.eur(paidMe), color: "var(--c-text)", bg: "transparent" },
+        { label: you + " ha pagat", value: this.eur(closeTotal - paidMe), color: "var(--c-text)", bg: "transparent" },
+        { label: closeNet > 0 ? you + " et deu" : "Deus a " + you, value: this.eur(closeNet), color: closeNet > 0 ? "var(--c-pos)" : "var(--c-neg)", bg: "var(--c-soft)" }
+      ] : [],
+      closeNote: pj ? "Es crearà una única línia al llibre general: «Tancament: " + pj.name + "» de " + this.eur(closeNet) + ". El projecte passarà a tancats i no s'hi podran afegir despeses." : "",
+      confirmClose: this.confirmClose,
+
+      showToast: !!s.toast, toast: s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

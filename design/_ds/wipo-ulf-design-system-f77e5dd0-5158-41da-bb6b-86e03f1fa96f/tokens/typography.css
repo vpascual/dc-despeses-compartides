@@ -1,0 +1,29 @@
+/* ============================================================
+   WIPO ULF — Typography tokens
+   Typeface: Noto Sans Display. Headings 500 (Medium), body 400.
+   Type scale follows the ULF exponential baseline grid.
+   Page titles / H1 = Title Case; all other headings = sentence case.
+   ============================================================ */
+:root {
+  --font-sans: "Noto Sans Display", "Helvetica Neue", Arial, sans-serif;
+
+  --weight-regular: 400;
+  --weight-medium: 500;   /* headings */
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Heading scale — size / line-height */
+  --h1-size: 38px;   --h1-lh: 55px;
+  --h2-size: 32px;   --h2-lh: 47px;
+  --h3-size: 28px;   --h3-lh: 42px;
+  --h4-size: 24px;   --h4-lh: 36px;
+  --h5-size: 20px;   --h5-lh: 31px;
+  --h6-size: 18px;   --h6-lh: 24px;
+
+  /* Body scale */
+  --body-lg: 18px;   --body-lg-lh: 24px;
+  --body-base: 16px; --body-base-lh: 24px;
+  --body-md: 14px;   --body-md-lh: 23px;
+  --body-sm: 12px;   --body-sm-lh: 18px;
+  --body-caption: 10px; --body-caption-lh: 18px;
+}

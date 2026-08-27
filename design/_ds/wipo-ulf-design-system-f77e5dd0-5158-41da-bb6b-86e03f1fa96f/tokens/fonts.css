@@ -1,0 +1,5 @@
+/* WIPO ULF webfont — Noto Sans Display.
+   The official ULF loads this from https://webcomponents.wipo.int/wipo-navbar/ulf-fonts.css
+   We pull the same family from Google Fonts (weights 400/500/600/700) so every
+   specimen card and mock renders with the real typeface offline-friendly. */
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Display:wght@400;500;600;700&display=swap");
