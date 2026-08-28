@@ -1,5 +1,8 @@
+"use client";
+
 import { formatEur } from "@/lib/format";
 import type { FeedItem } from "@/lib/ledger";
+import { useExpenseSheet } from "@/components/expense-sheet-provider";
 
 export default function LedgerRow({
   item,
@@ -8,6 +11,8 @@ export default function LedgerRow({
   item: FeedItem;
   isLast: boolean;
 }) {
+  const { openEdit } = useExpenseSheet();
+
   const deltaColor =
     item.delta === null
       ? "var(--c-sub)"
@@ -17,14 +22,31 @@ export default function LedgerRow({
           ? "var(--c-neg)"
           : "var(--c-sub)";
 
+  const editable = item.editable;
+
   return (
     <div
+      onClick={
+        editable
+          ? () =>
+              openEdit({
+                id: item.id,
+                amount: item.amount,
+                description: item.title,
+                payerId: editable.payerId,
+                categoryId: editable.categoryId,
+                groupId: editable.groupId,
+                mySharePercent: editable.mySharePercent,
+              })
+          : undefined
+      }
       style={{
         display: "flex",
         alignItems: "center",
         gap: 14,
         padding: "14px 16px",
         borderBottom: isLast ? "none" : "1px solid var(--c-border)",
+        cursor: editable ? "pointer" : "default",
       }}
     >
       <div
@@ -72,6 +94,12 @@ export default function LedgerRow({
           {item.deltaLabel}
         </span>
       </div>
+      {editable && (
+        <i
+          className="bi bi-chevron-right"
+          style={{ color: "var(--c-sub)", fontSize: 13 }}
+        />
+      )}
     </div>
   );
 }

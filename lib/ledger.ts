@@ -143,6 +143,24 @@ export function getActiveProjects(meId: string): Promise<ProjectSummary[]> {
   return summarizeProjects(meId, "active");
 }
 
+export type LedgerOption = { id: string; label: string };
+
+export async function getLedgerOptions(): Promise<LedgerOption[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("groups")
+    .select("id, name")
+    .eq("type", "project")
+    .eq("status", "active")
+    .order("opened_at", { ascending: false });
+  if (error) throw error;
+
+  return [
+    { id: GENERAL_LEDGER_ID, label: "General" },
+    ...data.map((g) => ({ id: g.id, label: g.name })),
+  ];
+}
+
 export function getClosedProjects(meId: string): Promise<ProjectSummary[]> {
   return summarizeProjects(meId, "closed");
 }
@@ -157,6 +175,13 @@ export type FeedItem = {
   amount: number;
   delta: number | null;
   deltaLabel: string;
+  /** Raw fields for editing; only set on user-created (non-rollup) expenses. */
+  editable: {
+    payerId: string;
+    categoryId: string | null;
+    groupId: string;
+    mySharePercent: number;
+  } | null;
 };
 
 export async function getGeneralLedgerFeed(
@@ -170,7 +195,7 @@ export async function getGeneralLedgerFeed(
     supabase
       .from("expenses")
       .select(
-        "id, description, paid_by, expense_date, amount, rolled_up_from_group_id, category:categories(icon)",
+        "id, description, paid_by, expense_date, amount, group_id, category_id, rolled_up_from_group_id, category:categories(icon)",
       )
       .eq("group_id", GENERAL_LEDGER_ID)
       .is("deleted_at", null)
@@ -194,13 +219,14 @@ export async function getGeneralLedgerFeed(
     const delta = expenseDeltaForViewer(e, shares, meId);
     const isRollup = e.rolled_up_from_group_id !== null;
 
+    const mineShare = shares.find((s) => s.user_id === meId)?.owed_amount ?? 0;
+    const myPercent = e.amount > 0 ? Math.round((mineShare / e.amount) * 100) : 50;
+
     let subtitle: string;
     if (isRollup) {
       subtitle = `Projecte tancat · ${formatDayMonth(e.expense_date)}`;
     } else {
       const payerLabel = e.paid_by === meId ? "Has pagat" : `${partnerName} ha pagat`;
-      const mineShare = shares.find((s) => s.user_id === meId)?.owed_amount ?? 0;
-      const myPercent = e.amount > 0 ? Math.round((mineShare / e.amount) * 100) : 50;
       const ratioSuffix =
         myPercent === 50 ? "" : ` · ${myPercent}/${100 - myPercent}`;
       subtitle = `${payerLabel}${ratioSuffix} · ${formatDayMonth(e.expense_date)}`;
@@ -216,6 +242,14 @@ export async function getGeneralLedgerFeed(
       amount: e.amount,
       delta,
       deltaLabel: `${delta >= 0 ? "+" : "−"}${formatEur(delta)}`,
+      editable: isRollup
+        ? null
+        : {
+            payerId: e.paid_by,
+            categoryId: e.category_id,
+            groupId: e.group_id,
+            mySharePercent: myPercent,
+          },
     };
   });
 
@@ -233,6 +267,7 @@ export async function getGeneralLedgerFeed(
       amount: s.amount,
       delta: null,
       deltaLabel: "liquidació",
+      editable: null,
     };
   });
 
