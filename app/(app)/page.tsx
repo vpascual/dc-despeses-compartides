@@ -117,10 +117,10 @@ export default async function Home() {
           border: "1px solid var(--c-border)",
           borderRadius: 8,
           background: "var(--c-soft)",
-          padding: "24px 20px",
+          padding: "18px 20px",
           display: "flex",
           flexDirection: "column",
-          gap: 14,
+          gap: 10,
         }}
       >
         <span
@@ -161,24 +161,6 @@ export default async function Home() {
             <span>{tag}</span>
           </div>
         </div>
-        <Link
-          href="/settle"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            minHeight: 50,
-            borderRadius: 4,
-            background: "var(--c-blue)",
-            color: "#fff",
-            fontSize: 15,
-            fontWeight: 500,
-          }}
-        >
-          <i className="bi bi-arrow-left-right" />
-          Saldar comptes
-        </Link>
       </div>
 
       <div

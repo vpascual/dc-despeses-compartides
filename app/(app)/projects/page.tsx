@@ -1,22 +1,21 @@
-export default function ProjectsPage() {
-  return (
-    <main
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 8,
-        minHeight: "60vh",
-        padding: "20px 20px 120px",
-        textAlign: "center",
-      }}
-    >
-      <i className="bi bi-collection" style={{ fontSize: 28, color: "var(--c-sub)" }} />
-      <span style={{ fontSize: 16, fontWeight: 500 }}>Projectes</span>
-      <span style={{ fontSize: 13, color: "var(--c-sub)", maxWidth: 280 }}>
-        Encara en construcció.
-      </span>
-    </main>
-  );
+import { createClient } from "@/lib/supabase/server";
+import { getActiveProjects, getClosedProjects } from "@/lib/ledger";
+import { getUsers } from "@/lib/users";
+import ProjectsView from "@/components/projects-view";
+
+export default async function ProjectsPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const users = await getUsers();
+  const me = users.find((u) => u.id === user?.id) ?? users[0];
+
+  const [active, closed] = await Promise.all([
+    getActiveProjects(me.id),
+    getClosedProjects(me.id),
+  ]);
+
+  return <ProjectsView active={active} closed={closed} />;
 }

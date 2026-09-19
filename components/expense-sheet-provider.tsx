@@ -25,7 +25,7 @@ export type EditableExpense = {
 };
 
 type ExpenseSheetContextValue = {
-  openCreate: () => void;
+  openCreate: (defaultGroupId?: string) => void;
   openEdit: (expense: EditableExpense) => void;
 };
 
@@ -105,8 +105,9 @@ export default function ExpenseSheetProvider({
     setOpen(false);
   }
 
-  function openCreate() {
+  function openCreate(defaultGroupId?: string) {
     resetAndClose();
+    if (defaultGroupId) setGroupId(defaultGroupId);
     setOpen(true);
   }
 
@@ -211,7 +212,7 @@ export default function ExpenseSheetProvider({
 
       <button
         aria-label="Afegeix una despesa"
-        onClick={openCreate}
+        onClick={() => openCreate()}
         style={{
           position: "fixed",
           right: 20,

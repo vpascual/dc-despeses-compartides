@@ -184,6 +184,63 @@ export type FeedItem = {
   } | null;
 };
 
+type ExpenseRow = {
+  id: string;
+  description: string;
+  paid_by: string;
+  expense_date: string;
+  amount: number;
+  group_id: string;
+  category_id: string | null;
+  rolled_up_from_group_id: string | null;
+  category: { icon: string | null } | null;
+};
+
+const EXPENSE_SELECT =
+  "id, description, paid_by, expense_date, amount, group_id, category_id, rolled_up_from_group_id, category:categories(icon)";
+
+function mapExpenseToFeedItem(
+  e: ExpenseRow,
+  shares: ShareRow[],
+  meId: string,
+  partnerName: string,
+): FeedItem {
+  const delta = expenseDeltaForViewer(e, shares, meId);
+  const isRollup = e.rolled_up_from_group_id !== null;
+
+  const mineShare = shares.find((s) => s.user_id === meId)?.owed_amount ?? 0;
+  const myPercent = e.amount > 0 ? Math.round((mineShare / e.amount) * 100) : 50;
+
+  let subtitle: string;
+  if (isRollup) {
+    subtitle = `Projecte tancat · ${formatDayMonth(e.expense_date)}`;
+  } else {
+    const payerLabel = e.paid_by === meId ? "Has pagat" : `${partnerName} ha pagat`;
+    const ratioSuffix = myPercent === 50 ? "" : ` · ${myPercent}/${100 - myPercent}`;
+    subtitle = `${payerLabel}${ratioSuffix} · ${formatDayMonth(e.expense_date)}`;
+  }
+
+  return {
+    id: e.id,
+    kind: "expense",
+    date: e.expense_date,
+    icon: e.category?.icon ?? (isRollup ? "box-arrow-in-down" : "receipt"),
+    title: e.description,
+    subtitle,
+    amount: e.amount,
+    delta,
+    deltaLabel: `${delta >= 0 ? "+" : "−"}${formatEur(delta)}`,
+    editable: isRollup
+      ? null
+      : {
+          payerId: e.paid_by,
+          categoryId: e.category_id,
+          groupId: e.group_id,
+          mySharePercent: myPercent,
+        },
+  };
+}
+
 export async function getGeneralLedgerFeed(
   meId: string,
   meName: string,
@@ -194,9 +251,7 @@ export async function getGeneralLedgerFeed(
   const [expensesRes, settlementsRes] = await Promise.all([
     supabase
       .from("expenses")
-      .select(
-        "id, description, paid_by, expense_date, amount, group_id, category_id, rolled_up_from_group_id, category:categories(icon)",
-      )
+      .select(EXPENSE_SELECT)
       .eq("group_id", GENERAL_LEDGER_ID)
       .is("deleted_at", null)
       .order("expense_date", { ascending: false }),
@@ -214,44 +269,9 @@ export async function getGeneralLedgerFeed(
 
   const sharesByExpense = await getSharesByExpense(expenses.map((e) => e.id));
 
-  const expenseItems: FeedItem[] = expenses.map((e) => {
-    const shares = sharesByExpense.get(e.id) ?? [];
-    const delta = expenseDeltaForViewer(e, shares, meId);
-    const isRollup = e.rolled_up_from_group_id !== null;
-
-    const mineShare = shares.find((s) => s.user_id === meId)?.owed_amount ?? 0;
-    const myPercent = e.amount > 0 ? Math.round((mineShare / e.amount) * 100) : 50;
-
-    let subtitle: string;
-    if (isRollup) {
-      subtitle = `Projecte tancat · ${formatDayMonth(e.expense_date)}`;
-    } else {
-      const payerLabel = e.paid_by === meId ? "Has pagat" : `${partnerName} ha pagat`;
-      const ratioSuffix =
-        myPercent === 50 ? "" : ` · ${myPercent}/${100 - myPercent}`;
-      subtitle = `${payerLabel}${ratioSuffix} · ${formatDayMonth(e.expense_date)}`;
-    }
-
-    return {
-      id: e.id,
-      kind: "expense",
-      date: e.expense_date,
-      icon: e.category?.icon ?? (isRollup ? "box-arrow-in-down" : "receipt"),
-      title: e.description,
-      subtitle,
-      amount: e.amount,
-      delta,
-      deltaLabel: `${delta >= 0 ? "+" : "−"}${formatEur(delta)}`,
-      editable: isRollup
-        ? null
-        : {
-            payerId: e.paid_by,
-            categoryId: e.category_id,
-            groupId: e.group_id,
-            mySharePercent: myPercent,
-          },
-    };
-  });
+  const expenseItems: FeedItem[] = expenses.map((e) =>
+    mapExpenseToFeedItem(e, sharesByExpense.get(e.id) ?? [], meId, partnerName),
+  );
 
   const settlementItems: FeedItem[] = settlements.map((s) => {
     const inbound = s.to_user === meId;
@@ -274,4 +294,65 @@ export async function getGeneralLedgerFeed(
   return [...expenseItems, ...settlementItems].sort((a, b) =>
     a.date < b.date ? 1 : a.date > b.date ? -1 : 0,
   );
+}
+
+export type ProjectDetail = {
+  id: string;
+  name: string;
+  status: string;
+  openedAt: string;
+  total: number;
+  net: number;
+  paidByMe: number;
+  paidByPartner: number;
+  feed: FeedItem[];
+};
+
+export async function getProjectDetail(
+  projectId: string,
+  meId: string,
+  partnerName: string,
+): Promise<ProjectDetail | null> {
+  const supabase = await createClient();
+
+  const { data: group, error: groupError } = await supabase
+    .from("groups")
+    .select("id, name, status, opened_at")
+    .eq("id", projectId)
+    .eq("type", "project")
+    .maybeSingle();
+  if (groupError) throw groupError;
+  if (!group) return null;
+
+  const { data: expenses, error: expensesError } = await supabase
+    .from("expenses")
+    .select(EXPENSE_SELECT)
+    .eq("group_id", projectId)
+    .is("deleted_at", null)
+    .order("expense_date", { ascending: false });
+  if (expensesError) throw expensesError;
+
+  const sharesByExpense = await getSharesByExpense(expenses.map((e) => e.id));
+
+  const feed = expenses.map((e) =>
+    mapExpenseToFeedItem(e, sharesByExpense.get(e.id) ?? [], meId, partnerName),
+  );
+
+  const total = expenses.reduce((sum, e) => sum + e.amount, 0);
+  const paidByMe = expenses
+    .filter((e) => e.paid_by === meId)
+    .reduce((sum, e) => sum + e.amount, 0);
+  const net = feed.reduce((sum, item) => sum + (item.delta ?? 0), 0);
+
+  return {
+    id: group.id,
+    name: group.name,
+    status: group.status,
+    openedAt: group.opened_at,
+    total,
+    net,
+    paidByMe,
+    paidByPartner: total - paidByMe,
+    feed,
+  };
 }
